@@ -1,0 +1,25 @@
+{
+  "name": "twitch-idle",
+  "version": "1.0.0",
+  "description": "Always wanted to be a famous streamer ? Try it on this idle like game and be the N° 1 on Twitch !",
+  "main": "game.js",
+  "dependencies": {
+    "bootstrap-vue": "^2.15.0",
+    "vue": "^2.6.11",
+    "bootstrap": "^4.5.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/th3conc3pt3ur/twitch-idle.git"
+  },
+  "author": "TheConcepteur",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/th3conc3pt3ur/twitch-idle/issues"
+  },
+  "homepage": "https://github.com/th3conc3pt3ur/twitch-idle#readme"
+}

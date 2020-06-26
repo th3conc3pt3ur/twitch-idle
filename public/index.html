@@ -1,0 +1,160 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/toastr.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+    <div class="wrapper" id="wrapper">
+        <nav id="sidebar">
+            <div class="sidebar-header">
+                <h3>Menu</h3>
+            </div>
+            <ul class="list-unstyled components">
+                <li class="">
+                    <a href="#" v-on:click="navigation='home'">Home</a>
+                </li>
+                <li>
+                    <a href="#" v-on:click="navigation='shopping'">Shopping</a>
+                </li>
+                <li>
+                    <a href="#" v-on:click="navigation='upgrade'">Upgrade</a>
+                </li> <li>
+                    <a href="#" v-on:click="navigation='game'">Games</a>
+                </li>
+            </ul>
+        </nav>
+        <div id="content" style="width:100%;">
+            <nav class="navbar navbar-expand-lg navbar-light bg-light">
+                <div class="container-fluid">
+                    <div class="row" style="width:100%">
+                        <div class="col">
+                            <div class="follow">
+                                Follow : {{streamer.follow}}
+                                <i class="fas fa-heart" style="color: rgb(131, 84, 202)"></i>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="subs">
+                                Subs : {{streamer.subs}}
+                                <i class="fas fa-star" style="color: rgb(131, 84, 202)"></i>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="famous">
+                                Fame : {{streamer.fame}} <span v-if="streamer.fameCalc != null" v-bind:title="'Streaming '+streamer.gameSelected.name+ ' give you '+streamer.gameSelected.fameModificator+' fame bonus'" style="color:green;">+{{streamer.gameSelected.fameModificator}}</span>
+                                <i class="fas fa-fire"></i>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="money">
+                                Money : {{streamer.money}}
+                                <i class="fas fa-money-bill-wave"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="button" id="sidebarCollapse" class="btn btn-info">
+                        <i class="fas fa-align-left"></i>
+                        {{navigation}}
+                    </button>
+                </div>
+            </nav>
+
+            <!-- here come the dashboard of the streamer -->
+            <div class="container" id="streamerCard" v-if="navigation=='home'">
+                <div class="row">
+                    <div class="col-6">
+                        <div class="stats-streamer" style="border: 1px solid black;border-radius:15px;padding:10px;">
+                            <div class="launchStopStreaming">
+                                <button class="btn" v-bind:class="{'btn-danger' : streamer.active,'btn-success' : !streamer.active}" v-on:click="streamer.active = !streamer.active">
+                                    <span v-if="streamer.active">STOP</span>
+                                    <span v-if="!streamer.active">START</span>
+                                </button>
+                            </div>
+                            <div class="name">{{streamer.name}}</div>
+                            <div class="games">
+                                <select v-model="streamer.gameSelected" style="float:right">
+                                    <option v-for="game in streamer.games" v-bind:value="game">{{game.name}}</option>
+                                  </select>
+                            </div>
+                            <div class="rest">
+                                <i class="fas" v-bind:class="{ 'fa-bed' : streamer.rest,'fa-headset': !streamer.rest}"></i> 
+                                <span v-if="streamer.rest">Resting</span>
+                                <span v-if="!streamer.rest">Streaming</span>
+                            </div>
+                            <div class="streamingHours"><i class="far fa-clock"></i> Hour of stream :
+                                {{ streamer.stream_hours|round }}</div>
+                            <div class="health"><i class="fas fa-heart" style="color: red;"></i> Health
+                                {{streamer.currentHealth}}</div>
+                            <div class="stamina">Stamina {{streamer.currentStamina}}/{{streamer.maxStamina}}</div>
+                            <div class="progress">
+                                <div class="progress-bar bg-warning" role="progressbar"
+                                    v-bind:style="{ width: (streamer.currentStamina / streamer.maxStamina) * 100 + '%'}"
+                                    aria-valuenow="75" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="stuff-streamer" style="border: 1px solid black;border-radius:15px;padding:10px;">
+                            <div class="keyboard">{{streamer.setup.keyboard.name}}</div>
+                            <div class="mouse">{{streamer.setup.mouse.name}}</div>
+                            <div class="graphicCard">{{streamer.setup.graphicCard.name}}</div>
+                            <div class="cpu">{{streamer.setup.cpu.name}}</div>
+                            <div class="ssd">{{streamer.setup.ssd.name}}</div>
+                            <div class="screen">{{streamer.setup.screen.name}}</div>
+                            <div class="webcam">{{streamer.setup.webcam.name}}</div>
+                            <div class="chair">{{streamer.setup.chair.name}}</div>
+                            <div class="micro">{{streamer.setup.micro.name}}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="container" id="shopping" v-if="navigation=='shopping'">
+                Amazon => list of stuff to buys
+            </div>
+            <div class="container" id="upgrade" v-if="navigation=='upgrade'">
+                Upgrades list
+                <div class="row" style="padding:10px;">
+                    <div class="boxUpgrade col-3" v-for="upgrade in streamer.upgradeAvailable">
+                        {{upgrade.name }}
+                        <span v-if="upgrade.price != undefined">{{upgrade.price}}</span>
+                        <button class="btn btn-success" style="float:right" v-bind:id="upgrade.id" v-on:click="upgrade.fnc()">BUY</button>
+                    </div>
+                </div>
+            </div>
+            <div class="container" id="sectionGames" v-if="navigation=='game'">
+                List of current games owned
+                List of buyable games => get list from the twitch api ?
+                <div class="row">
+                    <div class="gameBox col-4" v-for="game in games" style="border:1px solid black;padding:10px;margin:10px;">
+                        <img v-bind:src="game.img" style="width:100px;height:100px;float:left;margin-right:5px;"/>
+                        <div class="gameName">{{game.name}}</div>
+                        <br clear='all'>
+                        <hr>
+                        <div class="text-center">
+                            <button v-if="haveThisGame(game)" disabled class="btn btn-success">Already own</button>
+                            <button v-if="!haveThisGame(game)" v-on:click="buyGame(game)" class="btn btn-success">Buy {{game.cost}}</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/jquery-3.5.1.min.js"></script>
+    <script src="js/popper.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/vue@2.6.11"></script>
+    <script src="js/all.min.js"></script>
+    <script src="../src/streamer.js"></script>
+    <script src="../src/game.js"></script>
+    <script src="js/style.js"></script>
+    <script src="js/toastr.min.js"></script>
+    <script src="../src/config.json"></script>
+    <script src="../src/twitchApi.js"></script>
+</body>
+</html>
