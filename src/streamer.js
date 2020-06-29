@@ -26,7 +26,8 @@ class Upgrade {
     oneTimeFollow
     oneTimeSubs
     fameBuff
-    constructor(_name,_fnc,_id,_price,_staminaBuff,_healthBuff,_oneTimeFollow,_oneTimeSubs,_fameBuff) {
+    moneyBuff
+    constructor(_name,_fnc,_id,_price,_staminaBuff,_healthBuff,_oneTimeFollow,_oneTimeSubs,_fameBuff,_moneyBuff) {
         this.name = _name
         this.fnc = _fnc
         this.id = _id
@@ -36,9 +37,11 @@ class Upgrade {
         this.oneTimeFollow = _oneTimeFollow
         this.oneTimeSubs = _oneTimeSubs
         this.fameBuff = _fameBuff
+        this.moneyBuff = _moneyBuff
     }
 }
 PartnerUpgrade = new Upgrade("Become Twitch Partner")
+
 // we can see upgrade like = "Open Youtube Channel","Create a twitter","Create a facebook"
 
 class Stuff {
@@ -122,12 +125,13 @@ class Streamer {
         this.gameSelected = null; // game currently param for streaming
         this.rest = false;
         this.upgradeAvailable = [] // tab for upgrade that can be purchase
-        this.upgrade = [] // tab for upgrade already purchase
+        this.adsAvaiable = [] //tab for ads that can be purchase ads are basically upgrade
 
         this.partner = false; // gain the partner role => can have subs
         
         // stats channel
         this.subs = 0;
+        this.subsMultiplicator = 1; // this multiplicator is multiply by the number of subs 
         this.follow = 140;
         this.fame = 11;// index for follow / subs increased , by default = 11 for random follow between 0 and 10
         this.fameCalc =  null;
@@ -175,8 +179,39 @@ class Streamer {
     checkUpgrade() {
         // check avaiable upgrade
         var partnerUpgrade = new Upgrade("Twitch Partner",this.becomePartner,"upgrade_twitch_partner");
-        if(this.follow >= 150 && !this.partner && !this.upgradeAvailable.some(upgrade => upgrade.name === 'Twitch Partner')) { // partner unlocked
+        if(this.follow >= 150 && !this.partner && !this.upgradeAvailable.some(upgrade => upgrade.id === 'upgrade_twitch_partner')) { // partner unlocked
             this.upgradeAvailable.push(partnerUpgrade);
+        }
+        if(this.partner && !this.upgradeAvailable.some(upgrade => upgrade.id === 'upgrade_twitch_multi')) {
+            // if partner we need to display the twitch multiplicator upgrade
+            // multi base = 1 , augment 0.1
+            var twitchMultiUpgrade = new Upgrade("Twitch subs multiplicator",this.upgradeTwitchModificator,"upgrade_twitch_multi");
+            var nbUpgrade = Math.floor((Math.abs(1 - this.subsMultiplicator))/0.1);
+            if(nbUpgrade == 0) {
+                twitchMultiUpgrade.cost = 1000;
+                this.upgradeAvailable.push(twitchMultiUpgrade);
+            } else {
+                twitchMultiUpgrade.cost = (nbUpgrade+1) * 3000; // TODO : to be balance
+                this.upgradeAvailable.push(twitchMultiUpgrade);
+            }
+        }
+    }
+    checkAds() {
+        // troll raid shadow ?
+        if(this.partner) {
+            if(!this.adsAvaiable.some(upgrade => upgrade.id === 'upgrade_raid_shadow')) {
+                var oneTimeSubs = Math.floor(this.subs/100); // minimum 100 subs
+                if(oneTimeSubs < 100) {
+                    oneTimeSubs = 100;
+                }
+                var fameBuff = Math.floor(Math.random() * this.fameCalc / 3);
+                console.log("Fame buff : "+fameBuff);
+                var moneyBuff = Math.floor(this.subs * this.fame);
+                console.log("Money buff : "+moneyBuff)
+                var raidShadow = new Upgrade("Raid Shadow Legends Ads","upgradeRaidShadowAds","upgrade_raid_shadow",0,0,0,0,oneTimeSubs,fameBuff,moneyBuff)
+
+                toastr.success('See the ads panel for detail', 'A new ads is avaiable !!')
+            }
         }
     }
 
@@ -187,12 +222,25 @@ class Streamer {
         game.streamer.upgradeAvailable.splice(game.streamer.upgradeAvailable.findIndex(v => v.id === "upgrade_twitch_partner"),1);
     }
 
+    upgradeTwitchModificator()
+    {
+        var upgrade = game.streamer.upgradeAvailable.filter(upgrade => upgrade.id === 'upgrade_twitch_multi')[0]
+        if(game.streamer.money >= upgrade.cost) {
+            game.streamer.money -= upgrade.cost;
+            game.streamer.subsMultiplicator += 0.1; 
+            
+            game.streamer.upgradeAvailable.splice(game.streamer.upgradeAvailable.findIndex(v => v.id === "upgrade_twitch_multi"),1);
+            toastr.success("You've upgrade your twitch multiplier successfully !!", 'MileStones Achieve !!')
+        } else {
+            toastr.error("You don't have enough money for this !!!", 'Error Money REQUIRED !!')
+        }
+    }
+
     generateSubs(){
         if(this.partner) {
             let nbSubs = Math.floor(Math.random() * this.fameCalc / 3); // like 1/3 follow are subs => so nb subs are divided by 3 
             var plusOrMinus = getPlusOrMinus();
             this.addSubs(Math.ceil((nbSubs * plusOrMinus)/10));
-            
         }
     }
     generateFollow(){
@@ -221,9 +269,14 @@ class Streamer {
         }
     }
 }
+toastr.options = {
+    positionClass: 'toast-bottom-center',
+    closeButton: true
+};
 //gameTick;
+var lastPaidTick = null;
+var LastAds = null;
 setInterval (function gameTick() {
-    
     if(game.streamer.active) {
         if(game.streamer.rest) {
             // streamer resting => gain stamina
@@ -234,11 +287,38 @@ setInterval (function gameTick() {
             game.streamer.streaming()
         }
         game.streamer.checkUpgrade()
+
+        var time = new Date().getTime() / 1000;
+        var lenghtBetweenAds = 24  // TODO : to be balance
+        if(LastAds == null || (time - lenghtBetweenAds) >= LastAds) {
+            // 10% chance to "gain" an ads // TODO : to be balance
+            var max = 100;
+            var randomAds = Math.floor(Math.random() * Math.floor(max))+1; // generate 1 ... 100 number
+            if(randomAds >= 90) {
+                game.streamer.checkAds()
+            } else {
+                console.log("'loose' ads");
+            }
+            LastAds = time;
+        }
     }
     
+    // we need to actually increase money every X by subs
+    if(game.streamer.subs > 0){
+        // payed all lenghtGamePaid second
+        var lenghtGamePaid = 24 // TODO : to be balance
+        var time = new Date().getTime() / 1000;
+        if(lastPaidTick == null || (time - lenghtGamePaid) >= lastPaidTick) {
+            game.streamer.money += Math.floor(game.streamer.subs * game.streamer.subsMultiplicator)
+            lastPaidTick = time;
+        }
+    }
+
+    // we need to loose follow / subs by inactive day
+
     game.streamer.play_time+=(1/10);
     
-}, 100); // every second
+}, 100); // every 0.1 second
 
 function getPlusOrMinus()
 {

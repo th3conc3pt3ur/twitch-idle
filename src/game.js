@@ -2,6 +2,11 @@ Vue.filter('round', function (value) {
     if (!value) return ''
     value = Math.floor(value)
     return value
+});
+Vue.filter('toFixed',function(value) {
+  if(!value) return ''
+  value = value.toFixed(1);
+  return value;
 })
 game = new Vue({
     el: '#wrapper',
@@ -11,9 +16,7 @@ game = new Vue({
     },
     methods: {
       haveThisGame: function (_game) {
-        console.log(_game.name);
         var index = this.streamer.games.findIndex(v => v.name === _game.name)
-        console.log(index);
         if(index >= 0) {
           return true;
         }

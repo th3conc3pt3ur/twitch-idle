@@ -28,16 +28,12 @@ class TwitchApi {
                 "Client-ID":config.TWITCH_ID
             },
             success: function(response){
-                console.log(response);
                 for(var i = 0;i < response.data.length;i++) {
-                    console.log("games push");
                     var gameName = response.data[i].name;
                     var gameImg = response.data[i].box_art_url;
-                    gameImg = gameImg.replace("{width}","100").replace("{height}","100")
-                    console.log(gameImg);
-                    games.push(new Game(gameName,"","",gameImg));
+                    gameImg = gameImg.replace("{width}","100").replace("{height}","140")
+                    games.push(new Game(gameName,(20-i),"",gameImg));
                 }
-                console.log(games);
             }
         })
     }

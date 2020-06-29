@@ -86,3 +86,8 @@ a[data-toggle="collapse"] {
     border-radius : 15px;
     line-height: 35px;
 }
+.toast-top-center { 
+    bottom: 12px;   
+    margin: 0 auto;  
+    left: 50%;   
+  }
