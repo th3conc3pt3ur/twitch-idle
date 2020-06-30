@@ -10,37 +10,129 @@ class Game {
         this.img = _img;
     }
 }
-var games = [
-    LeagueOfLegends = new Game("League of Legends",10,0,""),
-    PathOfExile = new Game("Path of Exile",0,0,"")
-]
+var games = []
 
 
 class Upgrade {
     name
-    fnc
     id
-    price
+    cost
     staminaBuff
     healthBuff
     oneTimeFollow
     oneTimeSubs
     fameBuff
     moneyBuff
-    constructor(_name,_fnc,_id,_price,_staminaBuff,_healthBuff,_oneTimeFollow,_oneTimeSubs,_fameBuff,_moneyBuff) {
+    lore
+    messageSuccess
+    subsMultiplicator
+    ratioAds
+    img
+    constructor(_name,_id,_cost,_staminaBuff,_healthBuff,_oneTimeFollow,_oneTimeSubs,_fameBuff,_moneyBuff,_lore,_messageSuccess,_subsMultiplicator,_ratioAds,_img) {
         this.name = _name
-        this.fnc = _fnc
         this.id = _id
-        this.price = _price
+        this.cost = _cost
         this.staminaBuff = _staminaBuff
         this.healthBuff = _healthBuff
         this.oneTimeFollow = _oneTimeFollow
         this.oneTimeSubs = _oneTimeSubs
         this.fameBuff = _fameBuff
         this.moneyBuff = _moneyBuff
+        this.lore = _lore;
+        this.messageSuccess = _messageSuccess
+        this.subsMultiplicator = _subsMultiplicator
+        this.ratioAds = _ratioAds
+        this.img = _img
+    }
+    buy() {
+        if(game.streamer.money >= this.cost) {
+            game.streamer.money -= this.cost;
+            if(this.fameBuff != undefined && this.fameBuff != 0) {
+                game.streamer.fame = this.fameBuff
+            }
+            if(this.moneyBuff != undefined && this.moneyBuff != 0) {
+                game.streamer.money = this.moneyBuff;
+            }
+            if(this.staminaBuff != undefined && this.staminaBuff != 0) {
+                game.streamer.maxStamina += this.staminaBuff;
+            }
+            if(this.healthBuff != undefined && this.healthBuff != 0) {
+                game.streamer.maxHealth += this.healthBuff;
+            }
+            if(this.oneTimeFollow != undefined && this.oneTimeFollow != 0) {
+                game.streamer.follow += this.oneTimeFollow;
+            }
+            if(this.oneTimeSubs != undefined && this.oneTimeSubs != 0) {
+                game.streamer.subs += this.oneTimeSubs
+            }
+            if(this.subsMultiplicator != undefined && this.subsMultiplicator != 0) {
+                game.streamer.subsMultiplicator += this.subsMultiplicator
+            }
+            if(this.ratioAds != undefined && this.ratioAds != 0) {
+                game.streamer.ratioAds += this.ratioAds
+            }
+            toastr.success(this.messageSuccess, 'Upgrade Unlocked !!')
+
+            if(this.id == "upgrade_twitch_partner") {
+                game.streamer.partner = true;
+            }
+            
+            // remove the upgrade from available upgrade tab
+            game.streamer.upgradeAvailable.splice(game.streamer.upgradeAvailable.findIndex(v => v.id === this.id),1);
+        } else {
+            toastr.error("You don't have enough money for this !!!", 'Error Money REQUIRED !!')
+        }
     }
 }
-PartnerUpgrade = new Upgrade("Become Twitch Partner")
+// ads  : after buying community manager (upgrade level X) add X chance for an ads to pop // must be partner
+class Ads {
+    name
+    id
+    staminaBuff
+    healthBuff
+    oneTimeFollow
+    oneTimeSubs
+    fameBuff
+    moneyBuff
+    lore
+    constructor(_name,_id,_staminaBuff,_healthBuff,_oneTimeFollow,_oneTimeSubs,_fameBuff,_moneyBuff,_lore) {
+        this.name = _name
+        this.id = _id
+        this.staminaBuff = _staminaBuff
+        this.healthBuff = _healthBuff
+        this.oneTimeFollow = _oneTimeFollow
+        this.oneTimeSubs = _oneTimeSubs
+        this.fameBuff = _fameBuff
+        this.moneyBuff = _moneyBuff
+        this.lore = _lore
+    }
+    accept() {
+        if(this.fameBuff != undefined && this.fameBuff != 0) {
+            game.streamer.fame += this.fameBuff;
+        }
+        if(this.moneyBuff != undefined && this.moneyBuff != 0) {
+            game.streamer.money += this.moneyBuff;
+        }
+        if(this.staminaBuff != undefined && this.staminaBuff != 0) {
+            game.streamer.maxStamina += this.staminaBuff;
+        }
+        if(this.healthBuff != undefined && this.healthBuff != 0) {
+            game.streamer.maxHealth += this.healthBuff;
+        }
+        if(this.oneTimeFollow != undefined && this.oneTimeFollow != 0) {
+            game.streamer.follow += this.oneTimeFollow;
+        }
+        if(this.oneTimeSubs != undefined && this.oneTimeSubs != 0) {
+            game.streamer.subs += this.oneTimeSubs;
+        }
+        toastr.success("Congratulation you have accept "+this.name+" ads", 'Ads accepted !!')
+        game.streamer.adsAvaiable.splice(game.streamer.adsAvaiable.findIndex(v => v.id === this.id),1);
+    }
+
+    refuse() {
+        game.streamer.adsAvaiable.splice(game.streamer.adsAvaiable.findIndex(v => v.id === this.id),1);        
+    }
+}
 
 // we can see upgrade like = "Open Youtube Channel","Create a twitter","Create a facebook"
 
@@ -81,7 +173,7 @@ class Chair extends Stuff {
 class Micro extends Stuff {
     
 }
-    //     Razer DeathAdder V2. The best gaming mouse. ...
+    // Razer DeathAdder V2. The best gaming mouse. ...
     // Logitech G502 Lightspeed Wireless. The best premium gaming mouse. ...
     // HyperX Pulsefire Surge. The best gaming mouse for those on a budget. ...
     // Corsair Ironclaw RGB. ...
@@ -121,11 +213,12 @@ class Streamer {
         //attribut
         this.active = false;
         this.languages = ["FR"];// FR => french,EN => english ,CN = chinese, KR => korean , DE => german, etc ? List somewhere ?
-        this.games = [LeagueOfLegends] // list of the game the streamer can stream, unlocking by training, buying game
+        this.games = [] // list of the game the streamer can stream, unlocking by training, buying game
         this.gameSelected = null; // game currently param for streaming
         this.rest = false;
         this.upgradeAvailable = [] // tab for upgrade that can be purchase
         this.adsAvaiable = [] //tab for ads that can be purchase ads are basically upgrade
+        this.ratioAds = 90; // 90 = 10% chance to proc an ads
 
         this.partner = false; // gain the partner role => can have subs
         
@@ -146,6 +239,15 @@ class Streamer {
 
     addGame($game) {
         this.games.push($game);
+    }
+    addAds($ads) {
+        this.adsAvaiable.push($ads);
+    }
+    addFame(fame) {
+        this.fame += fame;
+    }
+    removeAds(index) {
+        this.adsAvaiable.slice(index,1);
     }
     resting(){
         let staminaRegen = (this.maxStamina / 2) / 10;
@@ -177,62 +279,82 @@ class Streamer {
         
     }
     checkUpgrade() {
-        // check avaiable upgrade
-        var partnerUpgrade = new Upgrade("Twitch Partner",this.becomePartner,"upgrade_twitch_partner");
+        // PARTNER UPGRADE
+        var partnerUpgrade = new Upgrade("Twitch Partner","upgrade_twitch_partner",null,null,null,null,null,null,null,"Do you want to be in the twitch family ?","Welcome to the twitch family !");
         if(this.follow >= 150 && !this.partner && !this.upgradeAvailable.some(upgrade => upgrade.id === 'upgrade_twitch_partner')) { // partner unlocked
             this.upgradeAvailable.push(partnerUpgrade);
         }
+
+        // TWITCH MULTIPLIER
         if(this.partner && !this.upgradeAvailable.some(upgrade => upgrade.id === 'upgrade_twitch_multi')) {
             // if partner we need to display the twitch multiplicator upgrade
             // multi base = 1 , augment 0.1
-            var twitchMultiUpgrade = new Upgrade("Twitch subs multiplicator",this.upgradeTwitchModificator,"upgrade_twitch_multi");
+            var twitchMultiUpgrade = new Upgrade("Twitch subs multiplicator","upgrade_twitch_multi",null,null,null,null,null,null,null,"The CM of Twitch likes you <img src='img/lul.png'>","More money for you !",0.1);
+            twitchMultiUpgrade.img = "img/happy.png"
             var nbUpgrade = Math.floor((Math.abs(1 - this.subsMultiplicator))/0.1);
             if(nbUpgrade == 0) {
                 twitchMultiUpgrade.cost = 1000;
                 this.upgradeAvailable.push(twitchMultiUpgrade);
             } else {
                 twitchMultiUpgrade.cost = (nbUpgrade+1) * 3000; // TODO : to be balance
+                var more = "more";
+                for(var i = 0;i< nbUpgrade;i++) {
+                    more += ", and more"
+                }
+                twitchMultiUpgrade.lore = "The Twitch CM likes you "+more+"<img src='img/lul.png'>"
                 this.upgradeAvailable.push(twitchMultiUpgrade);
             }
         }
+
+        // COMMUNITY MANAGER
+        if(this.follow >= 200 && this.subs >= 50 && !this.upgradeAvailable.some(upgrade => upgrade.id === 'upgrade_cm')) {
+            var cmUpgrade = new Upgrade("Hire community manager","upgrade_cm")
+            cmUpgrade.img = "img/i_want_you.jpg";
+            if(this.ratioAds == 90) {// base value
+                cmUpgrade.cost = 1000
+                cmUpgrade.ratioAds = -1;
+                cmUpgrade.lore = "Hire a community manager for upgrade your chance to receive an offer of ads"
+            } else {
+                var nbUpgrade = (90 - this.ratioAds);
+                cmUpgrade.cost = 6000 * nbUpgrade;
+                cmUpgrade.ratioAds = -1;
+                cmUpgrade.name = "Upgrade your CM"
+                cmUpgrade.lore = "Upgrade community manager for augment your chance to receive an offer of ads"
+            }
+            
+            this.upgradeAvailable.push(cmUpgrade);
+        }
+
+        // DESIGNER
+        if(!this.upgradeAvailable.some(upgrade => upgrade.id === 'upgrade_designer')) {
+            var designerUpgrade = new Upgrade("Hire designer","upgrade_designer")
+            designerUpgrade.img = "img/i_want_you.jpg";
+            designerUpgrade.cost = 4000; // TODO : to be balance
+            designerUpgrade.fameBuff = 4; // TODO : to be balance
+            designerUpgrade.lore = "Want some fancy icon, overlay, and be the more pimp twitcher ?"
+            
+            this.upgradeAvailable.push(designerUpgrade);
+        }
+
     }
     checkAds() {
         // troll raid shadow ?
         if(this.partner) {
-            if(!this.adsAvaiable.some(upgrade => upgrade.id === 'upgrade_raid_shadow')) {
+            if(!this.adsAvaiable.some(upgrade => upgrade.id === 'upgrade_raid_shadow')) { // one raid shadow ads at one time
                 var oneTimeSubs = Math.floor(this.subs/100); // minimum 100 subs
                 if(oneTimeSubs < 100) {
                     oneTimeSubs = 100;
                 }
                 var fameBuff = Math.floor(Math.random() * this.fameCalc / 3);
-                console.log("Fame buff : "+fameBuff);
+                // we don't want 0 debuff for raid shadow
+                if(fameBuff == 0) {
+                    fameBuff = 1;
+                }
                 var moneyBuff = Math.floor(this.subs * this.fame);
-                console.log("Money buff : "+moneyBuff)
-                var raidShadow = new Upgrade("Raid Shadow Legends Ads","upgradeRaidShadowAds","upgrade_raid_shadow",0,0,0,0,oneTimeSubs,fameBuff,moneyBuff)
-
+                var raidShadow = new Ads("Raid Shadow Legends","upgrade_raid_shadow",0,0,0,oneTimeSubs,-fameBuff,moneyBuff,"Want some money for ya ?")
+                this.adsAvaiable.push(raidShadow);
                 toastr.success('See the ads panel for detail', 'A new ads is avaiable !!')
             }
-        }
-    }
-
-    becomePartner() {
-        toastr.success('You become a Twitch Partner ! Congratulation !!!', 'MileStones Achieve !!')
-        game.streamer.partner = true;
-        // remove the upgrade from available upgrade tab
-        game.streamer.upgradeAvailable.splice(game.streamer.upgradeAvailable.findIndex(v => v.id === "upgrade_twitch_partner"),1);
-    }
-
-    upgradeTwitchModificator()
-    {
-        var upgrade = game.streamer.upgradeAvailable.filter(upgrade => upgrade.id === 'upgrade_twitch_multi')[0]
-        if(game.streamer.money >= upgrade.cost) {
-            game.streamer.money -= upgrade.cost;
-            game.streamer.subsMultiplicator += 0.1; 
-            
-            game.streamer.upgradeAvailable.splice(game.streamer.upgradeAvailable.findIndex(v => v.id === "upgrade_twitch_multi"),1);
-            toastr.success("You've upgrade your twitch multiplier successfully !!", 'MileStones Achieve !!')
-        } else {
-            toastr.error("You don't have enough money for this !!!", 'Error Money REQUIRED !!')
         }
     }
 
@@ -243,6 +365,7 @@ class Streamer {
             this.addSubs(Math.ceil((nbSubs * plusOrMinus)/10));
         }
     }
+
     generateFollow(){
         var tempFollow = this.follow;
         let nbFollow = Math.floor(Math.random() * this.fameCalc); // default between 0 and 10 follow
@@ -256,12 +379,14 @@ class Streamer {
         }
 
     }    
+
     addFollow(nb){
         this.follow+= nb
         if(this.follow <= 0) {
             this.follow = 0;
         }
     }
+
     addSubs(nb) {
         this.subs += nb;
         if(this.subs <= 0) {
@@ -288,19 +413,31 @@ setInterval (function gameTick() {
         }
         game.streamer.checkUpgrade()
 
-        var time = new Date().getTime() / 1000;
-        var lenghtBetweenAds = 24  // TODO : to be balance
-        if(LastAds == null || (time - lenghtBetweenAds) >= LastAds) {
-            // 10% chance to "gain" an ads // TODO : to be balance
-            var max = 100;
-            var randomAds = Math.floor(Math.random() * Math.floor(max))+1; // generate 1 ... 100 number
-            if(randomAds >= 90) {
-                game.streamer.checkAds()
-            } else {
-                console.log("'loose' ads");
+        // ads check
+        if(game.streamer.partner) {
+            var time = new Date().getTime() / 1000;
+            var lenghtBetweenAds = 24  // TODO : to be balance
+            if(LastAds == null || (time - lenghtBetweenAds) >= LastAds) {
+                // 10% chance to "gain" an ads // TODO : to be balance
+                var max = 100;
+                var randomAds = Math.floor(Math.random() * Math.floor(max))+1; // generate 1 ... 100 number
+                if(randomAds >= game.streamer.ratioAds) {
+                    game.streamer.checkAds()
+                } else {
+                    console.log("'loose' ads");
+                }
+                LastAds = time;
             }
-            LastAds = time;
         }
+        // check for EVENT ? random event can pop :
+        // bad or good
+        // Internet box burn... Impossible to stream for x days sad.png
+        // Keyboard broke, to mutch salty ? sad.png
+        // Mouse broke, to mutch salty ? sad.png
+        // You have been raid by *Insert random twitch streamer* , you've gain X follow,subs
+
+
+        
     }
     
     // we need to actually increase money every X by subs
@@ -314,7 +451,7 @@ setInterval (function gameTick() {
         }
     }
 
-    // we need to loose follow / subs by inactive day
+    // we need to loose follow / subs by inactive day ?
 
     game.streamer.play_time+=(1/10);
     
@@ -334,15 +471,4 @@ function buyGame(_game)
         game.streamer.addGame(_game);
         toastr.success('You can now stream '+_game.name+' ! Congratulation !!', 'Game '+_game.name+' bought !!')
     }
-}
-
-
-
-// ads pop in dashboard after buying community manager upgrade level X
-class Ads{
-    // ads the streamer accept
-    moneyGiven = 100;
-    game = "Raid Shadow";
-    leaveChannelPercent = 2; // % of people who dislike and unfollow / unsubs
-    nbHourReq = 2; // Nb hours req for the ads
 }

@@ -85,9 +85,36 @@ a[data-toggle="collapse"] {
     border: 1px solid grey;
     border-radius : 15px;
     line-height: 35px;
+    margin:5px;
 }
 .toast-top-center { 
     bottom: 12px;   
     margin: 0 auto;  
     left: 50%;   
-  }
+}
+
+.upgradeName {
+    font-weight: bold;
+}
+
+.upgradeDescription, .adsDetail {
+    line-height: normal;
+    font-size: small;
+}
+.lore {
+    font-style: italic;
+    font-size:small;
+    line-height: 28px;
+}
+.positive {
+    color: #28a745;
+    font-weight: bold;
+}
+.negative {
+    color: red;
+    font-weight: bold;
+}
+.upgradeImg{
+    height: 32px;
+    float: left;
+}

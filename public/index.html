@@ -22,13 +22,13 @@
                     <a href="#" v-on:click="navigation='shopping'">Shopping</a>
                 </li>
                 <li>
-                    <a href="#" v-on:click="navigation='upgrade'">Upgrade</a>
+                    <a href="#" v-on:click="navigation='upgrade'">Upgrade <span v-if="streamer.upgradeAvailable.length > 0" class="badge badge-pill badge-primary">{{streamer.upgradeAvailable.length}}</span></a>
                 </li> 
                 <li>
                     <a href="#" v-on:click="navigation='game'">Games</a>
                 </li>
                 <li>
-                    <a href="#" v-on:click="navigation='ads'">Ads</a>
+                    <a href="#" v-on:click="navigation='ads'">Ads <span v-if="streamer.adsAvaiable.length > 0" class="badge badge-pill badge-primary">{{streamer.adsAvaiable.length}}</span></a>
                 </li>
             </ul>
         </nav>
@@ -123,14 +123,27 @@
             </div>
             <div class="container" id="upgrade" v-if="navigation=='upgrade'">
                 Upgrades list
-                <div class="row" style="padding:10px;">
-                    <div class="boxUpgrade col-4" v-for="upgrade in streamer.upgradeAvailable">
-                        {{upgrade.name }}
-                        <button class="btn btn-success" style="float:right" v-bind:id="upgrade.id" v-on:click="upgrade.fnc()">
-                            <span v-if="upgrade.cost != undefined">{{upgrade.cost}}</span>
-                            <span v-if="upgrade.cost == undefined || upgrade.cost == 0">FREE</span>
-                            <i class="fas fa-money-bill-wave"></i>
-                        </button>
+                <div class="row">
+                    <div class="boxUpgrade col-3" v-for="upgrade in streamer.upgradeAvailable">
+                        <div class="upgradeName"><img class="upgradeImg" v-if="upgrade.img != undefined" v-bind:src="upgrade.img"> {{upgrade.name }}</div>
+                        <div class="upgradeDescription">
+                            <div v-if="upgrade.staminaBuff != undefined">Stamina +{{upgrade.staminaBuff}}</div>
+                            <div v-if="upgrade.healthBuff != undefined">Health +{{upgrade.healthBuff}}</div>
+                            <div v-if="upgrade.oneTimeFollow != undefined">Follow +{{upgrade.oneTimeFollow}}</div>
+                            <div v-if="upgrade.oneTimeSubs != undefined">Subs +{{upgrade.oneTimeSubs}}</div>
+                            <div v-if="upgrade.fameBuff != undefined">Fame +{{upgrade.fameBuff}}</div>
+                            <div v-if="upgrade.moneyBuff != undefined">Money +{{upgrade.moneyBuff}}</div>
+                            <div v-if="upgrade.subsMultiplicator != undefined">Twitch multiplicator <span class="positive">+{{upgrade.subsMultiplicator}}</span></div>
+                            <hr>
+                            <div class="lore" v-if="upgrade.lore != undefined" v-html="upgrade.lore"></div>
+                        </div>
+                        <div class="text-center" style="margin-top:5px;">
+                            <button class="btn btn-success" v-bind:id="upgrade.id" v-on:click="upgrade.buy()">
+                                <span v-if="upgrade.cost != undefined" >{{upgrade.cost}}</span>
+                                <span v-if="upgrade.cost == undefined || upgrade.cost == 0">FREE</span>
+                                <i class="fas fa-money-bill-wave"></i>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -154,16 +167,22 @@
             <div class="container" id="sectionAds" v-if="navigation=='ads'">
                 List of avaiable ads
                 <div class="row">
-                    <div class="gameAds col-4" v-for="ads in streamer.adsAvaiable" style="border:1px solid black;padding:10px;margin:10px;">
-                        {{ads.name }}
+                    <div class="boxUpgrade col-4" v-for="ads in streamer.adsAvaiable" style="border:1px solid black;padding:10px;margin:10px;">
+                        <div class="upgradeName" v-if="ads != undefined">{{ads.name}}</div>
                         <div class="adsDetail">
-                            {{ads.detail}}
+                            <div v-if="ads.staminaBuff != undefined">Stamina <span class="positive">+{{ads.staminaBuff}}</span></div>
+                            <div v-if="ads.healthBuff != undefined">Health <span class="positive">+{{ads.healthBuff}}</span></div>
+                            <div v-if="ads.oneTimeFollow != undefined">Follow <span class="positive">+{{ads.oneTimeFollow}}</span></div>
+                            <div v-if="ads.oneTimeSubs != undefined">Subs <span class="positive">+{{ads.oneTimeSubs}}</span></div>
+                            <div v-if="ads.fameBuff != undefined">
+                                Fame <span v-bind:class="ads.fameBuff > 0 ? 'positive' : 'negative'">{{ads.fameBuff}}</span>
+                            </div>
+                            <div v-if="ads.moneyBuff != undefined">Money <span class="positive">+{{ads.moneyBuff}}</span></div>
+                            <div class="lore" v-if="ads.lore != undefined">{{ads.lore}}</div>
                         </div>
-                        <button class="btn btn-success" style="float:right" v-bind:id="ads.id" v-on:click="ads.fnc()">
-                            <span v-if="ads.cost != undefined">{{ads.cost}}</span>
-                            <span v-if="ads.cost == undefined || ads.cost == 0">FREE</span>
-                            <i class="fas fa-money-bill-wave"></i>
-                        </button>
+                        <button class="btn btn-danger" style="float:right" v-on:click="ads.refuse()">REFUSE</button>
+                        <button class="btn btn-success" style="float:right;margin-right:5px;" v-bind:id="ads.id" v-on:click="ads.accept()">ACCEPT</button>
+                        
                     </div>
                 </div>
             </div>
