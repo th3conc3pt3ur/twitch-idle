@@ -119,7 +119,11 @@
                 </div>
             </div>
             <div class="container" id="shopping" v-if="navigation=='shopping'">
-                Amazon => list of stuff to buys
+                <div class="row" v-for="m in mouses" style="margin:5px;border:1px solid black">
+                    <div class="col-2"><img v-bind:src="m.img" style="height:64px;"></div>
+                    <div class="col">{{m.name}}</div>
+                    <div class="col-2"><button style="float:right;margin-top:5px;" class="btn btn-success">{{m.price}} <i class="fas fa-money-bill-wave"></i></button></div>
+                </div>
             </div>
             <div class="container" id="upgrade" v-if="navigation=='upgrade'">
                 Upgrades list

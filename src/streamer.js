@@ -134,17 +134,16 @@ class Ads {
     }
 }
 
-// we can see upgrade like = "Open Youtube Channel","Create a twitter","Create a facebook"
-
 class Stuff {
+    buff
+    name
+    img
+    price
+
     constructor(_name) {
         this.name = _name;
         if(_name == null) this.name = this.constructor.name
     }
-    
-    name
-    img
-    price
 }
 class Keyboard extends Stuff {
     
@@ -358,6 +357,16 @@ class Streamer {
         }
     }
 
+    checkEvent() {
+        // % of event proc ?
+        // check for EVENT ? random event can pop :
+        // bad or good
+        // Internet box burn... Impossible to stream for x days sad.png
+        // Keyboard broke, to mutch salty ? sad.png
+        // Mouse broke, to mutch salty ? sad.png
+        // You have been raid by *Insert random twitch streamer* , you've gain X follow,subs
+    }
+
     generateSubs(){
         if(this.partner) {
             let nbSubs = Math.floor(Math.random() * this.fameCalc / 3); // like 1/3 follow are subs => so nb subs are divided by 3 
@@ -435,9 +444,8 @@ setInterval (function gameTick() {
         // Keyboard broke, to mutch salty ? sad.png
         // Mouse broke, to mutch salty ? sad.png
         // You have been raid by *Insert random twitch streamer* , you've gain X follow,subs
+        game.streamer.checkEvent()
 
-
-        
     }
     
     // we need to actually increase money every X by subs
@@ -450,6 +458,7 @@ setInterval (function gameTick() {
             lastPaidTick = time;
         }
     }
+
 
     // we need to loose follow / subs by inactive day ?
 
@@ -472,3 +481,33 @@ function buyGame(_game)
         toastr.success('You can now stream '+_game.name+' ! Congratulation !!', 'Game '+_game.name+' bought !!')
     }
 }
+$.getJSON("data/mouse.json", function(json) {
+    mouses = []; 
+    
+    for(var i = 0 ; i< json.length;i++) {
+        var myMouse = new Mouse(json[i].name);
+        myMouse.img = json[i].src;
+        myMouse.price = json[i].price;
+        mouses.push(myMouse);        
+    }
+});
+$.getJSON("data/keyboard.json", function(json) {
+    keyboards = []; 
+    
+    for(var i = 0 ; i< json.length;i++) {
+        var myKb = new Keyboard(json[i].name);
+        myKb.img = json[i].src;
+        myKb.price = json[i].price;
+        keyboards.push(myKb);        
+    }
+});
+$.getJSON("data/graphic_card.json", function(json) {
+    graphicCards = []; 
+    
+    for(var i = 0 ; i< json.length;i++) {
+        var myKb = new GraphicCard(json[i].name);
+        myKb.img = json[i].src;
+        myKb.price = json[i].price;
+        graphicCards.push(myKb);        
+    }
+});
