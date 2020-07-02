@@ -119,7 +119,28 @@
                 </div>
             </div>
             <div class="container" id="shopping" v-if="navigation=='shopping'">
-                <div class="row" v-for="m in mouses" style="margin:5px;border:1px solid black">
+                <div class="row">
+                    <div class="col"><button class="btn btn-primary" v-on:click="shop='mouse'">Mouse</button></div>
+                    <div class="col"><button class="btn btn-primary" v-on:click="shop='keyboard'">Keyboard</button></div>
+                    <div class="col"><button class="btn btn-primary" v-on:click="shop='graphicCard'">Graphic card</button></div>
+                    <div class="col"><button class="btn btn-primary" v-on:click="shop='cpu'">CPU</button></div>
+                </div>
+                <div class="row" v-if="shop == 'mouse'" v-for="m in mouses" style="margin:5px;border:1px solid black">
+                    <div class="col-2"><img v-bind:src="m.img" style="height:64px;"></div>
+                    <div class="col">{{m.name}}</div>
+                    <div class="col-2"><button style="float:right;margin-top:5px;" class="btn btn-success">{{m.price}} <i class="fas fa-money-bill-wave"></i></button></div>
+                </div>
+                <div class="row" v-if="shop == 'keyboard'" v-for="m in keyboards" style="margin:5px;border:1px solid black">
+                    <div class="col-2"><img v-bind:src="m.img" style="height:64px;"></div>
+                    <div class="col">{{m.name}}</div>
+                    <div class="col-2"><button style="float:right;margin-top:5px;" class="btn btn-success">{{m.price}} <i class="fas fa-money-bill-wave"></i></button></div>
+                </div>
+                <div class="row" v-if="shop == 'graphicCard'" v-for="m in graphicCards" style="margin:5px;border:1px solid black">
+                    <div class="col-2"><img v-bind:src="m.img" style="height:64px;"></div>
+                    <div class="col">{{m.name}}</div>
+                    <div class="col-2"><button style="float:right;margin-top:5px;" class="btn btn-success">{{m.price}} <i class="fas fa-money-bill-wave"></i></button></div>
+                </div>
+                <div class="row" v-if="shop == 'cpu'" v-for="m in cpus" style="margin:5px;border:1px solid black">
                     <div class="col-2"><img v-bind:src="m.img" style="height:64px;"></div>
                     <div class="col">{{m.name}}</div>
                     <div class="col-2"><button style="float:right;margin-top:5px;" class="btn btn-success">{{m.price}} <i class="fas fa-money-bill-wave"></i></button></div>
@@ -192,9 +213,9 @@
             </div>
         </div>
     </div>
-
     <script src="js/jquery-3.5.1.min.js"></script>
     <script src="js/toastr.min.js"></script>
+    <script>toastr.options.escapeHtml = false;</script>
     <script src="js/popper.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
     <script src="js/vue@2.6.11"></script>

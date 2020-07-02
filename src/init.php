@@ -12,6 +12,10 @@ $htmlKeyboard = file_get_html(__DIR__."/keyboard.html");
 $htmlGc = file_get_html(__DIR__."/cg.html");
 $tabGc = [];
 
+//$htmlCpu = file_get_html("https://www.amazon.com/s?k=cpu");
+$htmlCpu = file_get_html(__DIR__."/cpu.html");
+$tabCpu = [];
+
     
 foreach ($htmlMouse->find('div.s-main-slot.s-result-list.s-search-results.sg-row > div') as $element) {
     $img = $element->find('img.s-image', 0);
@@ -31,12 +35,24 @@ foreach ($htmlKeyboard->find('div.s-main-slot.s-result-list.s-search-results.sg-
             $tabKeyboard[] = array('name' => trim($img->alt),'src' => $img->src,'price' => ($price == null ? "" : $price->text()));
         }
     }
-}foreach ($htmlGc->find('div.s-main-slot.s-result-list.s-search-results.sg-row > div') as $element) {
+}
+
+foreach ($htmlGc->find('div.s-main-slot.s-result-list.s-search-results.sg-row > div') as $element) {
     $img = $element->find('img.s-image', 0);
     $price = $element->find('span.a-offscreen', 0);
     if($price != null && $img != null) {
         if($img->alt != "") {
             $tabGc[] = array('name' => trim($img->alt),'src' => $img->src,'price' => ($price == null ? "" : $price->text()));
+        }
+    }
+}
+
+foreach ($htmlCpu->find('div.s-main-slot.s-result-list.s-search-results.sg-row > div') as $element) {
+    $img = $element->find('img.s-image', 0);
+    $price = $element->find('span.a-offscreen', 0);
+    if($price != null && $img != null) {
+        if($img->alt != "") {
+            $tabCpu[] = array('name' => trim($img->alt),'src' => $img->src,'price' => ($price == null ? "" : $price->text()));
         }
     }
 }
@@ -56,6 +72,8 @@ function cmpPrice($a, $b)
 usort($tabMouse,"cmpPrice");
 usort($tabKeyboard,"cmpPrice");
 usort($tabGc,"cmpPrice");
+usort($tabCpu,"cmpPrice");
 file_put_contents(__DIR__.'/../public/data/mouse.json',json_encode($tabMouse,JSON_PRETTY_PRINT));
 file_put_contents(__DIR__.'/../public/data/keyboard.json',json_encode($tabKeyboard,JSON_PRETTY_PRINT));
 file_put_contents(__DIR__.'/../public/data/graphic_card.json',json_encode($tabGc,JSON_PRETTY_PRINT));
+file_put_contents(__DIR__.'/../public/data/cpu.json',json_encode($tabCpu,JSON_PRETTY_PRINT));

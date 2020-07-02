@@ -1,0 +1,87 @@
+[
+    {
+        "name": "AMD Ryzen 3 3200G 4-Core Unlocked Desktop Processor with Radeon Graphics",
+        "src": "https:\/\/m.media-amazon.com\/images\/I\/710U2ZVk31L._AC_UY218_.jpg",
+        "price": "$99.99"
+    },
+    {
+        "name": "Intel Core i3-8100 Desktop Processor 4 Cores up to 3.6 GHz Turbo Unlocked LGA1151 300 Series 95W",
+        "src": "https:\/\/m.media-amazon.com\/images\/I\/61ZMffpkQKL._AC_UY218_.jpg",
+        "price": "$115.99"
+    },
+    {
+        "name": "Intel Core i3-10300 Desktop Processor 4 Cores up to 4.4 GHz\u00a0 LGA1200 (Intel 400 Series chipset) 65W",
+        "src": "https:\/\/m.media-amazon.com\/images\/I\/613qMkiCWjL._AC_UY218_.jpg",
+        "price": "$152.00"
+    },
+    {
+        "name": "AMD Ryzen 5 2600 Processor with Wraith Stealth Cooler - YD2600BBAFBOX",
+        "src": "https:\/\/m.media-amazon.com\/images\/I\/81fbUyjzEmL._AC_UY218_.jpg",
+        "price": "$159.99"
+    },
+    {
+        "name": "Intel Core i5-9400 Desktop Processor 6 Cores up to 4.1 GHz Turbo LGA1151 300 Series 65W Processors BX80684I59400",
+        "src": "https:\/\/m.media-amazon.com\/images\/I\/71MNenQqBVL._AC_UY218_.jpg",
+        "price": "$168.15"
+    },
+    {
+        "name": "Intel Core i5-8400 Desktop Processor 6 Cores up to 4.0 GHz  LGA 1151 300 Series 65W",
+        "src": "https:\/\/m.media-amazon.com\/images\/I\/61NqeCC8A6L._AC_UY218_.jpg",
+        "price": "$171.95"
+    },
+    {
+        "name": "AMD Ryzen 5 3600 6-Core, 12-Thread Unlocked Desktop Processor with Wraith Stealth Cooler",
+        "src": "https:\/\/m.media-amazon.com\/images\/I\/71WPGXQLcLL._AC_UY218_.jpg",
+        "price": "$172.49"
+    },
+    {
+        "name": "Intel Core i5-10400 Desktop Processor 6 Cores up to 4.3 GHz\u00a0 LGA1200 (Intel 400 Series Chipset) 65W, Model Number: BX8070110400",
+        "src": "https:\/\/m.media-amazon.com\/images\/I\/61juA4lrX6L._AC_UY218_.jpg",
+        "price": "$182.00"
+    },
+    {
+        "name": "Intel Core i5-10400 Desktop Processor 6 Cores up to 4.3 GHz\u00a0 LGA1200 (Intel 400 Series Chipset) 65W, Model Number: BX8070110400",
+        "src": "https:\/\/m.media-amazon.com\/images\/I\/61juA4lrX6L._AC_UY218_.jpg",
+        "price": "$182.00"
+    },
+    {
+        "name": "AMD Ryzen 7 3700X 8-Core, 16-Thread Unlocked Desktop Processor with Wraith Prism LED Cooler",
+        "src": "https:\/\/m.media-amazon.com\/images\/I\/717Di3DGIbL._AC_UY218_.jpg",
+        "price": "$273.47"
+    },
+    {
+        "name": "AMD Ryzen 7 2700X Processor with Wraith Prism LED Cooler - YD270XBGAFBOX",
+        "src": "https:\/\/m.media-amazon.com\/images\/I\/61+r0qCDk1L._AC_UY218_.jpg",
+        "price": "$280.14"
+    },
+    {
+        "name": "AMD Ryzen 7 3800X 8-Core, 16-Thread Unlocked Desktop Processor with Wraith Prism LED Cooler",
+        "src": "https:\/\/m.media-amazon.com\/images\/I\/51GjnJrTWhL._AC_UY218_.jpg",
+        "price": "$319.99"
+    },
+    {
+        "name": "Intel Core i7-10700 Desktop Processor 8 Cores up to 4.8 GHz LGA 1200 (Intel 400 Series Chipset) 65W, BX8070110700",
+        "src": "https:\/\/m.media-amazon.com\/images\/I\/61IjjxzCfkL._AC_UY218_.jpg",
+        "price": "$334.89"
+    },
+    {
+        "name": "Intel Core i7-9700K Desktop Processor 8 Cores up to 4.9 GHz Turbo unlocked LGA1151 300 Series 95W",
+        "src": "https:\/\/m.media-amazon.com\/images\/I\/71Q5sdPHD-L._AC_UY218_.jpg",
+        "price": "$371.99"
+    },
+    {
+        "name": "AMD Ryzen 9 3900X 12-core, 24-thread unlocked desktop processor with Wraith Prism LED Cooler",
+        "src": "https:\/\/m.media-amazon.com\/images\/I\/71S31CWSs3L._AC_UY218_.jpg",
+        "price": "$419.94"
+    },
+    {
+        "name": "Intel Core i9-9900K Desktop Processor 8 Cores up to 5.0 GHz Turbo unlocked LGA1151 300 Series 95W",
+        "src": "https:\/\/m.media-amazon.com\/images\/I\/71RsweT83eL._AC_UY218_.jpg",
+        "price": "$495.89"
+    },
+    {
+        "name": "Intel Core i9-9900K Desktop Processor 8 Cores up to 5.0GHz Unlocked LGA1151 300 Series 95W (BX806849900K)",
+        "src": "https:\/\/m.media-amazon.com\/images\/I\/712kBEVHeXL._AC_UY218_.jpg",
+        "price": "$499.00"
+    }
+]

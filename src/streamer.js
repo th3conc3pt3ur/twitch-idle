@@ -12,6 +12,59 @@ class Game {
 }
 var games = []
 
+class Event {
+    name
+    type
+
+    constructor(_name,_type) {
+        this.name = _name;
+        this.type = _type;
+    }
+
+    execute(){
+        //proc the event
+        // Internet box burn... Impossible to stream for x days sad.png
+        // Keyboard broke, to mutch salty ? sad.png
+        // Mouse broke, to mutch salty ? sad.png
+        // You have been raid by *Insert random twitch streamer* , you've gain X follow,subs
+        if(this.type == "internet_box_down") {
+
+        }
+
+        if(this.type == "keyboard_broken"){
+            game.streamer.setup.keyboard = null;
+            toastr.error('Gonna have to buy a new one...', 'You broke your keyboard !! Too salty dude !')
+        }
+
+        if(this.type == "mouse_broken"){
+            game.streamer.setup.mouse = null;
+            toastr.error('Gonna have to buy a new one...', 'You broke your mouse !! Too salty dude !')
+        }
+
+        if(this.type == "raid") {
+            var raider = "Lirik";
+            var nbFollow = 100;
+            var nbSubs = 100;
+            var message = "You gain " + nbFollow+ " follows";
+            if(nbSubs > 0){
+                message += " and "+nbSubs+" subs ! GG dude !";
+            }
+            game.streamer.addFollow(nbFollow);
+            game.streamer.addSubs(nbSubs);
+            toastr.success(message, "<img src='img/pog.png'/> You've been raid by "+raider+" !")
+        }
+        if(this.type == "bad_buzz") {
+            var nbFollow = -100;
+            var nbSubs = -100;
+
+            var message = "Why be so salty on Twitter ? :( You loose "+nbFollow+" follow";
+            message += " and "+nbSubs+" subs, sad day";
+            game.streamer.addFollow(nbFollow);
+            game.streamer.addSubs(nbSubs);
+            toastr.error(message, "<img src='img/sad.png'/> Oh no ! You've got a bad buzz !")
+        }
+    }
+}
 
 class Upgrade {
     name
@@ -75,6 +128,9 @@ class Upgrade {
 
             if(this.id == "upgrade_twitch_partner") {
                 game.streamer.partner = true;
+            }
+            if(this.id == "upgrade_designer") {
+                game.streamer.designer = true;
             }
             
             // remove the upgrade from available upgrade tab
@@ -218,7 +274,7 @@ class Streamer {
         this.upgradeAvailable = [] // tab for upgrade that can be purchase
         this.adsAvaiable = [] //tab for ads that can be purchase ads are basically upgrade
         this.ratioAds = 90; // 90 = 10% chance to proc an ads
-
+        this.designer = false;
         this.partner = false; // gain the partner role => can have subs
         
         // stats channel
@@ -235,7 +291,28 @@ class Streamer {
 
         this.setup = new Setup(); // setup of the streamer : config pc + webcam + chair + micro
     }
-
+    hydrate() {
+        if(this.upgradeAvailable.length > 0) {
+            for(var i = 0; i< this.upgradeAvailable.length;i++) {
+                if (this.upgradeAvailable[i].constructor.name == "Object"){
+                    // need to be hydrate
+                    var myUpgrade = new Upgrade();
+                    Object.assign(myUpgrade,this.upgradeAvailable[i]);
+                    this.upgradeAvailable[i] = myUpgrade;
+                }
+            }
+        }
+        if(this.adsAvaiable.length > 0) {
+            for(var i = 0; i< this.adsAvaiable.length;i++) {
+                if (this.adsAvaiable[i].constructor.name == "Object"){
+                    // need to be hydrate
+                    var myAds = new Ads();
+                    Object.assign(myAds,this.adsAvaiable[i]);
+                    this.adsAvaiable[i] = myAds;
+                }
+            }
+        }
+    }
     addGame($game) {
         this.games.push($game);
     }
@@ -325,7 +402,7 @@ class Streamer {
         }
 
         // DESIGNER
-        if(!this.upgradeAvailable.some(upgrade => upgrade.id === 'upgrade_designer')) {
+        if(!this.upgradeAvailable.some(upgrade => upgrade.id === 'upgrade_designer') && this.designer == false) {
             var designerUpgrade = new Upgrade("Hire designer","upgrade_designer")
             designerUpgrade.img = "img/i_want_you.jpg";
             designerUpgrade.cost = 4000; // TODO : to be balance
@@ -358,6 +435,14 @@ class Streamer {
     }
 
     checkEvent() {
+        var random = Math.random() * 100;
+        console.log("random event : "+random);
+        if(random > 50) {
+            // 50%
+            var event = new Event();
+            event.type ="raid";
+            event.execute();
+        }
         // % of event proc ?
         // check for EVENT ? random event can pop :
         // bad or good
@@ -384,7 +469,7 @@ class Streamer {
         if(tempFollow < 1000 && this.follow >= 1000) {
             // we reach the 1000 follow milestones => add fame
             this.fameCalc+= 1;
-            toastr.success('You reach the 1000 follow milestones ! Congratulation !!', 'MileStones Achieve !!')
+            toastr.success('You reach the 1000 follow milestones ! Congratulation !!', '<img src="img/pog.png" /> MileStones Achieve !!')
         }
 
     }    
@@ -404,8 +489,9 @@ class Streamer {
     }
 }
 toastr.options = {
-    positionClass: 'toast-bottom-center',
-    closeButton: true
+    //positionClass: 'toast-bottom-center',
+    positionClass :'toast-bottom-full-width',
+    closeButton: true,
 };
 //gameTick;
 var lastPaidTick = null;
@@ -436,6 +522,7 @@ setInterval (function gameTick() {
                     console.log("'loose' ads");
                 }
                 LastAds = time;
+                game.streamer.checkEvent()
             }
         }
         // check for EVENT ? random event can pop :
@@ -444,7 +531,7 @@ setInterval (function gameTick() {
         // Keyboard broke, to mutch salty ? sad.png
         // Mouse broke, to mutch salty ? sad.png
         // You have been raid by *Insert random twitch streamer* , you've gain X follow,subs
-        game.streamer.checkEvent()
+        
 
     }
     
@@ -509,5 +596,15 @@ $.getJSON("data/graphic_card.json", function(json) {
         myKb.img = json[i].src;
         myKb.price = json[i].price;
         graphicCards.push(myKb);        
+    }
+});
+$.getJSON("data/cpu.json", function(json) {
+    cpus = []; 
+    
+    for(var i = 0 ; i< json.length;i++) {
+        var myKb = new Cpu(json[i].name);
+        myKb.img = json[i].src;
+        myKb.price = json[i].price;
+        cpus.push(myKb);        
     }
 });
