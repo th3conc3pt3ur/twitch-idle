@@ -1,71 +1,3 @@
-class Game {
-    name
-    fameModificator
-    cost
-    img
-    constructor(_name,_fameModificator,_cost,_img){
-        this.name = _name;
-        this.fameModificator = _fameModificator;
-        this.cost = _cost
-        this.img = _img;
-    }
-}
-var games = []
-
-class Event {
-    name
-    type
-
-    constructor(_name,_type) {
-        this.name = _name;
-        this.type = _type;
-    }
-
-    execute(){
-        //proc the event
-        // Internet box burn... Impossible to stream for x days sad.png
-        // Keyboard broke, to mutch salty ? sad.png
-        // Mouse broke, to mutch salty ? sad.png
-        // You have been raid by *Insert random twitch streamer* , you've gain X follow,subs
-        if(this.type == "internet_box_down") {
-
-        }
-
-        if(this.type == "keyboard_broken"){
-            game.streamer.setup.keyboard = null;
-            toastr.error('Gonna have to buy a new one...', 'You broke your keyboard !! Too salty dude !')
-        }
-
-        if(this.type == "mouse_broken"){
-            game.streamer.setup.mouse = null;
-            toastr.error('Gonna have to buy a new one...', 'You broke your mouse !! Too salty dude !')
-        }
-
-        if(this.type == "raid") {
-            var raider = "Lirik";
-            var nbFollow = 100;
-            var nbSubs = 100;
-            var message = "You gain " + nbFollow+ " follows";
-            if(nbSubs > 0){
-                message += " and "+nbSubs+" subs ! GG dude !";
-            }
-            game.streamer.addFollow(nbFollow);
-            game.streamer.addSubs(nbSubs);
-            toastr.success(message, "<img src='img/pog.png'/> You've been raid by "+raider+" !")
-        }
-        if(this.type == "bad_buzz") {
-            var nbFollow = -100;
-            var nbSubs = -100;
-
-            var message = "Why be so salty on Twitter ? :( You loose "+nbFollow+" follow";
-            message += " and "+nbSubs+" subs, sad day";
-            game.streamer.addFollow(nbFollow);
-            game.streamer.addSubs(nbSubs);
-            toastr.error(message, "<img src='img/sad.png'/> Oh no ! You've got a bad buzz !")
-        }
-    }
-}
-
 class Upgrade {
     name
     id
@@ -190,70 +122,13 @@ class Ads {
     }
 }
 
-class Stuff {
-    buff
-    name
-    img
-    price
-
-    constructor(_name) {
-        this.name = _name;
-        if(_name == null) this.name = this.constructor.name
-    }
-}
-class Keyboard extends Stuff {
-    
-}
-class Mouse extends Stuff {
-
-}
-class GraphicCard extends Stuff {
-
-}
-class Cpu extends Stuff {
-
-}
-class Ssd extends Stuff {
-
-}
-class Screen extends Stuff {
-    
-}
-class Webcam extends Stuff {
-    
-}
-class Chair extends Stuff {
-
-}
-class Micro extends Stuff {
-    
-}
-    // Razer DeathAdder V2. The best gaming mouse. ...
-    // Logitech G502 Lightspeed Wireless. The best premium gaming mouse. ...
-    // HyperX Pulsefire Surge. The best gaming mouse for those on a budget. ...
-    // Corsair Ironclaw RGB. ...
-    // Razer Naga Trinity. ...
-    // Corsair Scimitar RGB Elite. ...
-    // Razer Viper. ...
-    // Roccat Kone Pure Ultra.
-
 class MyNavigation {
     constructor() {
         this.path = "home";
     }
     
 }
-class Setup {
-    keyboard = new Keyboard()
-    mouse = new Mouse()
-    graphicCard = new GraphicCard("2080 RTX")
-    cpu = new Cpu("Intel Core I7");
-    ssd = new Ssd("SSD")
-    screen = new Screen("Samsung")
-    webcam = new Webcam("HD1040")
-    chair = new Chair("Gaming Chair")
-    micro = new Micro("Blue YETI")
-}
+
 class Streamer {
     constructor() {
         this.name = "MrStreamer";
@@ -309,6 +184,16 @@ class Streamer {
                     var myAds = new Ads();
                     Object.assign(myAds,this.adsAvaiable[i]);
                     this.adsAvaiable[i] = myAds;
+                }
+            }
+        }
+        if(this.games.length > 0) {
+            for(var i = 0; i< this.games.length;i++) {
+                if (this.games[i].constructor.name == "Object"){
+                    // need to be hydrate
+                    var myUpgrade = new Game();
+                    Object.assign(myUpgrade,this.games[i]);
+                    this.games[i] = myUpgrade;
                 }
             }
         }
@@ -488,11 +373,7 @@ class Streamer {
         }
     }
 }
-toastr.options = {
-    //positionClass: 'toast-bottom-center',
-    positionClass :'toast-bottom-full-width',
-    closeButton: true,
-};
+
 //gameTick;
 var lastPaidTick = null;
 var LastAds = null;
@@ -560,51 +441,4 @@ function getPlusOrMinus()
     var influanceCoef = game.streamer.fame / 100
     return (rand+influanceCoef < 0.5 ? -1 : 1);
 }
-function buyGame(_game)
-{
-    if(game.streamer.money >= _game.cost) {
-        game.streamer.money -= _game.cost;
-        game.streamer.addGame(_game);
-        toastr.success('You can now stream '+_game.name+' ! Congratulation !!', 'Game '+_game.name+' bought !!')
-    }
-}
-$.getJSON("data/mouse.json", function(json) {
-    mouses = []; 
-    
-    for(var i = 0 ; i< json.length;i++) {
-        var myMouse = new Mouse(json[i].name);
-        myMouse.img = json[i].src;
-        myMouse.price = json[i].price;
-        mouses.push(myMouse);        
-    }
-});
-$.getJSON("data/keyboard.json", function(json) {
-    keyboards = []; 
-    
-    for(var i = 0 ; i< json.length;i++) {
-        var myKb = new Keyboard(json[i].name);
-        myKb.img = json[i].src;
-        myKb.price = json[i].price;
-        keyboards.push(myKb);        
-    }
-});
-$.getJSON("data/graphic_card.json", function(json) {
-    graphicCards = []; 
-    
-    for(var i = 0 ; i< json.length;i++) {
-        var myKb = new GraphicCard(json[i].name);
-        myKb.img = json[i].src;
-        myKb.price = json[i].price;
-        graphicCards.push(myKb);        
-    }
-});
-$.getJSON("data/cpu.json", function(json) {
-    cpus = []; 
-    
-    for(var i = 0 ; i< json.length;i++) {
-        var myKb = new Cpu(json[i].name);
-        myKb.img = json[i].src;
-        myKb.price = json[i].price;
-        cpus.push(myKb);        
-    }
-});
+

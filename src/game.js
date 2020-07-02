@@ -43,3 +43,10 @@ game = new Vue({
 window.addEventListener("beforeunload", function(e){
   game.persist();
 }, false);
+
+toastr.options = {
+  //positionClass: 'toast-bottom-center',
+  positionClass :'toast-bottom-full-width',
+  closeButton: true,
+  escapeHtml : false
+};
